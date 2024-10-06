@@ -29,7 +29,8 @@ def to_ll(nums: list[int]) -> ListNode:
 
 class Solution:
     def reverseList(self, head: Optional[ListNode]) -> Optional[ListNode]:
-        return self.iterative(head)
+        #return self.iterative(head)
+        return self.recursive(None, head)
     
     def iterative(self, head: Optional[ListNode]) -> Optional[ListNode]:
         # 0 or 1 items
@@ -48,11 +49,17 @@ class Solution:
 
         return prev
 
-    def recursive(self, head: Optional[ListNode]) -> Optional[ListNode]:
-        if head is None or head.next is None:
-            return head
+    def recursive(self, prev: Optional[ListNode], cur: Optional[ListNode]) -> Optional[ListNode]:
+        if cur is None:
+            return cur
+
+        next = cur.next
+        cur.next = prev
+
+        if next is None:
+            return cur
         
-        pass
+        return self.recursive(cur, next)
 
         
 l = to_ll([1,2,3,4,5])
