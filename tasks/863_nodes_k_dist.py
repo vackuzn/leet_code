@@ -56,44 +56,32 @@ def to_tree(arr: list[int]) -> TreeNode:
 
 
 class Solution:
-    def isBalanced(self, root: Optional[TreeNode]) -> bool:
-        if root is None:
-            return True
+    def distanceK(self, root: TreeNode, target: TreeNode, k: int) -> list[int]:
+        pass
+
+    def recurse(self, root: TreeNode, target: TreeNode, k: int) -> list[int]:
+        # target_node -> get k distance nodes
+        # get path from root to target_node
+        # foreach parent node: get k - n nested nodes, exclude nodes in path, where n is distance from parent node to target
+
+        stack = [(root, [root])]
+        while len(stack) > 0:
+            node, path = stack.pop()
+            stack.append(node)
+
+            if node.left == target:
+
+
+                pass
+
         
-        result = True
-        
-        def calc_tree_depth(node: TreeNode, depth: int) -> int:
-            if node.left is None and node.right is None:
-                return depth
-            
-            left_depth = depth
-            right_depth = depth
-
-            if node.left:
-                left_depth = calc_tree_depth(node.left, depth + 1)
-
-            if node.right:
-                right_depth = calc_tree_depth(node.right, depth + 1)
-
-            if abs(left_depth - right_depth) > 1:
-                nonlocal result
-                result = False
-                return depth
-            
-            return max(left_depth, right_depth)
-        
-        calc_tree_depth(root, 1)
-
-        return result
+        pass
 
 
-root = to_tree([5,4,8,11,None,13,4,7,2,None,None,5,1])
-root = to_tree([3,9,20,None,None,15,7])
-root = to_tree([1,None,2,None,3])
-root = to_tree([1,2,2,3,3,None,None,4,4])
-root = to_tree([1,2,3,4,5,6,None,8])
-root = to_tree([1,None,2,None,3])
-print(root)
+root = to_tree([3,5,1,6,2,0,8,None,None,7,4])
+#root = to_tree([1])
+#root = to_tree([0,1,3,None,2])
+#root = to_tree([1,2,2,3,3,None,None,4,4])
 #root = to_tree([1,2,2,3,4,4,3])
 #root = to_tree([1,2,2,None,3,None,3])
-print(Solution().isBalanced(root))
+print(Solution().dfs_stack(root) == Solution().dfs_stack2(root))
