@@ -8,27 +8,11 @@ class TreeNode:
         self.left = left
         self.right = right
 
+    def __eq__(self, value: object) -> bool:
+        return self.val == value.val
+
     def __repr__(self) -> str:
-        return self._build_repr("", [self]).strip()
-    
-    def _build_repr(self, s: str, level_nodes: list["TreeNode"]):
-        next_nodes = []
-        s_level = ""
-        level_empty = True
-
-        for n in level_nodes:
-            if not n:
-                s_level += "None "
-            else:
-                level_empty = False
-                s_level += str(n.val) + " "
-                next_nodes.append(n.left)
-                next_nodes.append(n.right)
-
-        if level_empty:
-            return s
-        
-        return self._build_repr(s + "\n" + s_level, next_nodes)
+        return str(self.val)
 
 
 def to_tree(arr: list[int]) -> TreeNode:
@@ -57,31 +41,60 @@ def to_tree(arr: list[int]) -> TreeNode:
 
 class Solution:
     def distanceK(self, root: TreeNode, target: TreeNode, k: int) -> list[int]:
-        pass
+        return self.recurse(root, target, k)
 
     def recurse(self, root: TreeNode, target: TreeNode, k: int) -> list[int]:
         # target_node -> get k distance nodes
         # get path from root to target_node
         # foreach parent node: get k - n nested nodes, exclude nodes in path, where n is distance from parent node to target
-
-        stack = [(root, [root])]
-        while len(stack) > 0:
-            node, path = stack.pop()
-            stack.append(node)
-
-            if node.left == target:
-
-
-                pass
-
+        if root is None:
+            return []
         
-        pass
+        if k == 0:
+            return [target.val]
+               
+        def get_path_to_node(path):
+            node = path[-1]
+            if node == target:
+                return path
+            
+            for n in (node.left, node.right):
+                if n:
+                    result = get_path_to_node(path + [n])
+                    if result is not None:
+                        return result
+
+            return None
+    
+        path_to_node = get_path_to_node([root])
+        
+        def get_k_distance_children(node: TreeNode, exclusions: list[TreeNode], k: int) -> list[TreeNode]:
+            if k == 0:
+                return [node.val]
+            
+            result = []
+            
+            for n in (node.left, node.right):
+                if n and n not in exclusions:
+                    node_res = get_k_distance_children(n, exclusions, k - 1)
+                    result += node_res
+            
+            return result
+        
+        result = []
+        for i, node in enumerate(path_to_node[::-1]):
+            if i > k:
+                break
+
+            result += get_k_distance_children(node, path_to_node, k-i)
+        
+        return result
 
 
-root = to_tree([3,5,1,6,2,0,8,None,None,7,4])
+root = to_tree([3,5,1,6,2,0,8,None,None,7,4]); target = TreeNode(5); k = 2
 #root = to_tree([1])
 #root = to_tree([0,1,3,None,2])
 #root = to_tree([1,2,2,3,3,None,None,4,4])
 #root = to_tree([1,2,2,3,4,4,3])
 #root = to_tree([1,2,2,None,3,None,3])
-print(Solution().dfs_stack(root) == Solution().dfs_stack2(root))
+print(Solution().distanceK(root, target, k))
