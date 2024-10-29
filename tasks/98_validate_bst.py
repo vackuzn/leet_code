@@ -59,7 +59,44 @@ def to_tree(arr: list[int]) -> TreeNode:
 
 class Solution:
     def isValidBST(self, root: Optional[TreeNode]) -> bool:
-        return self.recurse_inorder(root)
+        return self.morris(root)
+    
+    def morris(self, root) -> bool:
+        tourist = root
+        prev_min = None
+        
+        while tourist is not None:
+            if tourist.left:
+                # One step left and max to the right
+                guide = tourist.left
+                while guide.right is not None and guide.right != tourist:
+                    guide = guide.right
+                
+                # dead end - create bridge
+                if guide.right is None:
+                    guide.right = tourist
+                    tourist = tourist.left
+                    continue
+                
+                # already visited - right is tourist - delete bridge and
+                if guide.right == tourist:
+                    guide.right = None
+
+                    # in order traversal for tourist
+                    if prev_min is not None and prev_min >= tourist.val:
+                        return False
+                    
+                    prev_min = tourist.val
+                    tourist = tourist.right
+            else:
+                # in order traversal for tourist
+                if prev_min is not None and prev_min >= tourist.val:
+                    return False
+                
+                prev_min = tourist.val
+                tourist = tourist.right
+
+        return True
     
     def recurse_inorder(self, root: Optional[TreeNode]) -> bool:
         local_min = None
@@ -119,9 +156,3 @@ root = to_tree([1,2,3,4,None,5,6,None,None,7])
 #root = to_tree([1,2,2,3,4,4,3])
 #root = to_tree([1,2,2,None,3,None,3])
 print(Solution().isValidBST(root))
-
-
-a = 0
-
-if a == 0:
-    print("dfds")
